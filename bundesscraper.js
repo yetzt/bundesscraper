@@ -13,6 +13,7 @@ var argv = require("optimist")
 	.boolean(["c","d"])
 	.alias("c","cache")
 	.alias("d","debug")
+	.alias("v","verbose")
 	.argv;
 
 /* initialize scrapyard */
@@ -93,7 +94,7 @@ fetch.bt = function(_callback){
 					};
 					scraper.scrape(_data.url, "html", function(err, $){
 						if (err) {
-							console.log("ERR".inverse.bold.red, "fetching".white, _data.url.red);
+							if (argv.v) console.log("[fail]".inverse.bold.red, "fetching".white, _data.url.red);
 						} else {
 							/* name, fraktion */
 							var _title = $('h1', '#inhaltsbereich').eq(0).text().replace(/^\s+|\s+$/,'').split(', ');
@@ -273,12 +274,12 @@ fetch.bt = function(_callback){
 								_count_fetched++;
 
 								if (err) {
-									console.log("ERR".inverse.bold.red, "address".white, adr_search_firstname.red, adr_search_surname.red);
+									if (argv.v) console.log("[fail]".inverse.bold.red, "address".white, adr_search_firstname.red, adr_search_surname.red);
 								} else {
 									
 									if ($('.infoBox .standardBox table.standard','#container').length < 1) {
 										
-										console.log("ERR".inverse.bold.red, "address".white, adr_search_firstname.red, adr_search_surname.red);
+										if (argv.v) console.log("[fail]".inverse.bold.red, "address".white, adr_search_firstname.red, adr_search_surname.red);
 										
 									} else {
 										
@@ -544,7 +545,7 @@ fetch.agw = function(_callback){
 											}
 										});
 									} else {
-										console.log("ERRR!", _data.name, _data.agw_url);
+										if (argv.v) console.log("[fail]", _data.name, _data.agw_url);
 									}
 									
 									/* abgeordnetenwatch.de is a big pile of junk */
@@ -1337,7 +1338,7 @@ fetch.frak_cducsu = function(_callback){
 							scraper.scrape(_data.frak_url, "html", function(err, $){
 							
 								if ($('img').eq(0).attr("src") === "http://www.cducsu.de/404/keyvisual.jpg") {
-									console.log("Fake-404".red.inverse.bold, _data.frak_url.red.bold);
+									console.error("[grr!]".red.inverse.bold, "cducsu.de delivered a fake 404".red, _data.frak_url.white);
 								} else if (!err) {
 									
 									/* geburtsdatum, geburtsort, beruf */
@@ -1352,8 +1353,6 @@ fetch.frak_cducsu = function(_callback){
 										if (_geb) {
 											_data.geburtsdatum = _geb[1];
 											_data.geburtsort = _geb[2];
-										} else {
-											console.log("err".red, _lines[0]);
 										}
 										_data.beruf = _lines.pop();
 									});
@@ -1397,9 +1396,6 @@ fetch.frak_cducsu = function(_callback){
 															"address": $('a', _line).attr('href').replace(/^mailto:/g,'')
 														});
 													break;
-													default:
-														console.log(_line);
-													break;
 												}
 											} else {
 												_addr.push(_line);
@@ -1439,9 +1435,6 @@ fetch.frak_cducsu = function(_callback){
 															"name": "Wahlkreis",
 															"address": $('a', _line).attr('href').replace(/^mailto:/g,'')
 														});
-													break;
-													default:
-														console.log(_line);
 													break;
 												}
 											} else {
@@ -1519,10 +1512,10 @@ var fetch_all = function(_callback) {
 	};
 	
 	["bt","wp","agw","frak_spd","frak_gruene","frak_linke","frak_fdp","frak_cducsu"].forEach(function(_fetch){
-		console.log('[init]'.magenta.inverse.bold, "scraper".cyan, _fetch.white);
+		if (argv.v) console.log('[init]'.magenta.inverse.bold, "scraper".cyan, _fetch.white);
 		fetch[_fetch](function(err, data){
 			_passed++;
-			console.log(((err)?'[fail]'.red:'[ ok ]'.green).inverse.bold, "scraper".cyan, _fetch.white);
+			if (argv.v) console.log(((err)?'[fail]'.red:'[ ok ]'.green).inverse.bold, "scraper".cyan, _fetch.white);
 			if (!err) _data[_fetch] = data;
 			if (_passed === 8) _callback(null, _data);
 		});
@@ -1580,7 +1573,7 @@ var data_combine = function(_data, _callback){
 				break;
 			}
 		}
-		if (!_found) console.log("[warn]".inverse.bold.yellow, "Not found:".yellow, _name.white, '(Abgeordnetenwatch)'.cyan);
+		if (!_found && argv.v) console.log("[warn]".inverse.bold.yellow, "Not found:".yellow, _name.white, '(Abgeordnetenwatch)'.cyan);
 	}
 
 	/* find wikipedia */
@@ -1593,8 +1586,7 @@ var data_combine = function(_data, _callback){
 				break;
 			}
 		}
-		if (!_found) console.log("[warn]".inverse.bold.yellow, "Not found:".yellow, _data.wp[i].name.white, '(Wikipedia)'.cyan);
-		if (!_found) console.log(_kontakt);
+		if (!_found && argv.v) console.log("[warn]".inverse.bold.yellow, "Not found:".yellow, _data.wp[i].name.white, '(Wikipedia)'.cyan);
 	}
 	
 	/* find spd */
@@ -1612,7 +1604,7 @@ var data_combine = function(_data, _callback){
 				break;
 			}
 		}
-		if (!_found) console.log("[warn]".inverse.bold.yellow, "Not found:".yellow, _name.white, '(Fraktion SPD)'.cyan);
+		if (!_found && argv.v) console.log("[warn]".inverse.bold.yellow, "Not found:".yellow, _name.white, '(Fraktion SPD)'.cyan);
 	}
 
 	/* find grüne */
@@ -1630,7 +1622,7 @@ var data_combine = function(_data, _callback){
 				break;
 			}
 		}
-		if (!_found) console.log("[warn]".inverse.bold.yellow, "Not found:".yellow, _name.white, '(Fraktion Grüne)'.cyan);
+		if (!_found && argv.v) console.log("[warn]".inverse.bold.yellow, "Not found:".yellow, _name.white, '(Fraktion Grüne)'.cyan);
 	}
 	
 	/* find linke */
@@ -1648,7 +1640,7 @@ var data_combine = function(_data, _callback){
 				break;
 			}
 		}
-		if (!_found) console.log("[warn]".inverse.bold.yellow, "Not found:".yellow, _name.white, '(Fraktion Linke)'.cyan);
+		if (!_found && argv.v) console.log("[warn]".inverse.bold.yellow, "Not found:".yellow, _name.white, '(Fraktion Linke)'.cyan);
 	}
 	
 	/* find fdp */
@@ -1666,7 +1658,7 @@ var data_combine = function(_data, _callback){
 				break;
 			}
 		}
-		if (!_found) console.log("[warn]".inverse.bold.yellow, "Not found:".yellow, _name.white, '(Fraktion FDP)'.cyan);
+		if (!_found && argv.v) console.log("[warn]".inverse.bold.yellow, "Not found:".yellow, _name.white, '(Fraktion FDP)'.cyan);
 	}
 
 	/* find cdu/csu */
@@ -1684,7 +1676,7 @@ var data_combine = function(_data, _callback){
 				break;
 			}
 		}
-		if (!_found) console.log("[warn]".inverse.bold.yellow, "Not found:".yellow, _name.white, '(Fraktion CDU/CSU)'.cyan);
+		if (!_found && argv.v) console.log("[warn]".inverse.bold.yellow, "Not found:".yellow, _name.white, '(Fraktion CDU/CSU)'.cyan);
 	}
 
 	_callback(null, data);
@@ -1697,8 +1689,6 @@ var data_unify = function(_data, _callback){
 	
 	_data.forEach(function(item){
 		
-		// console.log(item);
-
 		var _data = {
 			name: item.data.bt.name,
 			fraktion: item.data.bt.fraktion,
@@ -1736,9 +1726,6 @@ var data_unify = function(_data, _callback){
 			if (_wahlkreis) {
 				_data.wahl.wahlkreis_id = _wahlkreis[1];
 				_data.wahl.wahlkreis_name = _wahlkreis[2];
-			} else {
-				console.log(item.data.bt);
-				process.exit();
 			}
 		}
 		
@@ -1820,9 +1807,6 @@ var data_unify = function(_data, _callback){
 			/* geschlecht */
 			if (typeof item.data.wp.gender !== "undefined") {
 				_data.meta.geschlecht = item.data.wp.gender;
-			} else {
-				console.log(item.data.wp);
-				process.exit();
 			}
 			
 			if (_data.meta.geburtsort === null && item.data.wp.geburtsort !== null) {
@@ -1838,7 +1822,7 @@ var data_unify = function(_data, _callback){
 			}
 		
 		} else {
-			console.log("[warn]".inverse.bold.yellow, "No Data for:".yellow, _data.name.white, '(Wikipedia)'.cyan);
+			if (argv.v) console.log("[warn]".inverse.bold.yellow, "No Data for:".yellow, _data.name.white, '(Wikipedia)'.cyan);
 		}
 
 		/* spd */
@@ -1877,7 +1861,7 @@ var data_unify = function(_data, _callback){
 				_data.wahl.liste = item.data.frak_spd.liste;
 			} else {
 				if (_data.wahl.liste !== item.data.frak_spd.liste) {
-					console.log("[warn]".inverse.bold.yellow, "List mismatch:".yellow, _data.wahl.liste.white, "<>".red, item.data.frak_spd.liste.white, _data.name.cyan, '(Fraktion SPD)'.cyan);
+					if (argv.v) console.log("[warn]".inverse.bold.yellow, "List mismatch:".yellow, _data.wahl.liste.white, "<>".red, item.data.frak_spd.liste.white, _data.name.cyan, '(Fraktion SPD)'.cyan);
 				}
 			}
 			
@@ -2075,12 +2059,12 @@ var load_data = function(_callback) {
 }
 
 var main = function(){
-	var out_file = path.resolve(__dirname, 'data.json');
+	var out_file = (argv._.length > 0) ?  path.resolve(argv._[0]) : path.resolve(__dirname, 'data.json');
 	load_data(function(err, data){
-		console.log('[stat]'.magenta.inverse.bold, "all data loaded".white);
+		if (argv.v) console.log('[stat]'.magenta.inverse.bold, "all data loaded".white);
 		data_combine(data, function(err, data){
 			data_unify(data, function(err, data){
-				console.log('[stat]'.magenta.inverse.bold, "all data combined".white);
+				if (argv.v) console.log('[stat]'.magenta.inverse.bold, "all data combined".white);
 				fs.writeFileSync(out_file, JSON.stringify(data, null, '\t'));
 				console.log("<3".bold.magenta, 'made with datalove'.magenta);
 			});
