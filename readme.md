@@ -24,7 +24,7 @@ npm -g install bundesscraper
 ## Usage
 
 ````
-npm [-c] [-v] [-d] [data.json]
+bundesscraper [-c] [-v] [-d] [data.json]
 ````
 
 * `-c` `--cache` turn on caching, creates cache.json with unprocessed data
