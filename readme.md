@@ -6,14 +6,14 @@ Scraping Data of Members of the German Federal Parliament.
 
 Bundesscraper collects data of German Parliament members from several Websites and combines them. The data is collected from
 
-* [http://www.bundestag.de/](bundestag.de)
-* [http://de.wikiepdia.org/](de.wikiepdia.org)
-* [http://www.abgeordnetenwatch.de/](abgeordnetenwatch.de)
-* [http://www.spdfraktion.de/](spdfraktion.de)
-* [http://www.gruene-bundestag.de/](gruene-bundestag.de)
-* [http://www.linksfraktion.de/](linksfraktion.de)
-* [http://www.fdp-fraktion.de/](fdp-fraktion.de)
-* [http://www.cducsu.de/](cducsu.de)
+* [bundestag.de](http://www.bundestag.de/)
+* [de.wikiepdia.org](http://de.wikiepdia.org/)
+* [abgeordnetenwatch.de](http://www.abgeordnetenwatch.de/)
+* [spdfraktion.de](http://www.spdfraktion.de/)
+* [gruene-bundestag.de](http://www.gruene-bundestag.de/)
+* [linksfraktion.de](http://www.linksfraktion.de/)
+* [fdp-fraktion.de](http://www.fdp-fraktion.de/)
+* [cducsu.de](http://www.cducsu.de/)
 
 ## Installation
 
@@ -32,4 +32,4 @@ npm [-c] [-v] [data.json]
 
 ## License
 
-Bundesscraper is [license.md](Public Domain).
+Bundesscraper is [Public Domain](./license.md).
