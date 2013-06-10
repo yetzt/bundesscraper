@@ -24,11 +24,12 @@ npm -g install bundesscraper
 ## Usage
 
 ````
-npm [-c] [-v] [data.json]
+npm [-c] [-v] [-d] [data.json]
 ````
 
 * `-c` `--cache` turn on caching, creates cache.json with unprocessed data
 * `-v` `--verbose` show a lot of information
+* `-d` `--debug` show a lot more information
 
 ## License
 
