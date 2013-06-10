@@ -2,7 +2,7 @@
 
 Scraping Data of Members of the German Federal Parliament.
 
-## Blafasel
+## About
 
 Bundesscraper collects data of German Parliament members from several Websites and combines them. The data is collected from
 
@@ -26,6 +26,9 @@ npm -g install bundesscraper
 ````
 npm [-c] [-v] [data.json]
 ````
+
+* `-c` `--cache` turn on caching, creates cache.json with unprocessed data
+* `-v` `--verbose` show a lot of information
 
 ## License
 
