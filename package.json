@@ -1,6 +1,6 @@
 {
 	"name": "bundesscraper",
-	"version": "0.1.0",
+	"version": "0.1.2",
 	"description": "Scraping Data of Members of the German Federal Parliament.",
 	"licenses": [{
 		"type": "Public Domain",
@@ -13,6 +13,9 @@
 		"web": "http://datenfreunde.com/"
 	}],
 	"main": "./bundesscraper.js",
+	"bin": {
+		"bundesscraper": "./bundesscraper.js"
+	},
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/yetzt/bundesscraper.git"
