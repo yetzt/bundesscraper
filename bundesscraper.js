@@ -1035,196 +1035,6 @@ fetch.frak_linke = function(_callback){
 							if ($(this).find('h3.kennung').length === 1 && $(this).find('h3.kennung').text() === "Linktipp") {
 								_data.web.push({
 									"service": "website",
-								});
-							}
-						});
-					
-					}
-					
-					data.push(_data);
-					
-					if (_count_fetchable === _count_fetched) {
-						
-						_callback(null, data);
-						
-					}
-		
-				});
-				
-			});
-
-		}
-		
-	});
-	
-};
-
-fetch.frak_fdp = function(_callback){
-
-	/* beware! i got a severe headache from this site */
-
-	var data = [];
-	var base_url = "http://www.fdp-fraktion.de/wcsite.php?wc_b=34";
-
-	scraper.scrape(base_url, "html", function(err, $){
-
-		if (err) {
-			_callback(err);
-		} else {
-			
-			var _count_fetchable = 0;
-			var _count_fetched = 0;
-
-			$('li.personLI a', '#contentarea').each(function(idx,e){
-				
-				_count_fetchable++;
-				
-				var _data = {
-					name: $(e).text().split(', ').reverse().join(' '),
-					frak_url: url.resolve(base_url, $(e).attr('href')),
-					fotos: [{
-						"url": $(e).find('img').attr('src'),
-						"copyright": null
-					}],
-					web: [],
-					kontakt: []
-				}
-				
-				scraper.scrape(_data.frak_url, "html", function(err, $){
-					
-					_count_fetched++;
-					
-					if (err) {
-						// err
-					} else {
-						
-						
-						/* name */
-						_data.name = $('.personContent h3', '#contentarea').eq(0).text();
-
-						/* website */
-						$('.personContent a', '#contentarea').each(function(idx,e){
-							if (typeof $(e).attr('title') !== "undefined" && $(e).attr('title').match(/Internetauftritt/)) {
-								_data.web.push({
-									"service": "website",
-									"url": $(e).attr('href')
-								});
-							}
-						});
-
-						/* geboren, beruf */
-						$('.personContent .list2 li', '#contentarea').each(function(idx,e){
-							if ($(e).text().match(/^geb. am /)) {
-								_data.geburtsdatum = $(e).text().replace(/^geb. am /,'');
-							} else if ($(e).text().match(/^Beruf: /)) {
-								_data.beruf = $(e).text().replace(/^Beruf: /,'');
-							}
-						});
-						
-						/* foto */
-						$('.imgleft a', '#contentarea').each(function(idx,e){
-							if ($(e).attr('title').match(/^Pressefoto/)) {
-								_data.fotos.push({
-									"url": $(e).attr('href'),
-									"copyright": null
-								});
-							}
-						});
-						
-						/* kontakt */
-						$('.personContact adress.hcard', '#contentarea').each(function(idx,e){
-
-							var _name = $(e).find('h4').text();
-							
-							$(e).find('.tel').each(function(idx,f){
-								_data.kontakt.push({
-									"type": "phone",
-									"name": _name,
-									"address": $(f).text().replace(/[^0-9]/g,'').replace(/^0/,'+49')
-								});
-							});
-
-							$(e).find('a').each(function(idx,f){
-								if ($(f).text() === "E-Mail") {
-									_data.kontakt.push({
-										"type": "email",
-										"name": _name,
-										"address": $(f).attr("href").replace(/^mailto:/g,'')
-									});
-								}
-							});
-							
-							/* extract everything else */
-							var _lines = [];
-							$(e).html().split(/<br>|<\/h4>/).forEach(function(_line){
-								_line = _line.replace(/^\s+|\s+$/g,'');
-								if (_line !== "" && !_line.match("<")) {
-									if (_line.match(/^Fax /)){
-										_data.kontakt.push({
-											"type": "fax",
-											"name": _name,
-											"address": _line.replace(/[^0-9]/g,'').replace(/^0/,'+49')
-										});
-									} else {
-										_lines.push(_line);
-									}
-								}
-							});
-
-							_data.kontakt.push({
-								"type": "address",
-								"name": _name,
-								"address": _lines.join(', ')
-							});
-
-						});
-
-						/* wahlkreis */
-						$('.personWK img', '#contentarea').each(function(idx,e){
-							_data.wahlkreis = $(e).attr('title').replace(/^Wahlkreis: /,'');
-						});
-						
-						/* social media */
-						$('.personWeb ul li', '#contentarea').each(function(idx,e){
-							if ($(e).hasClass('blog') && $(e).find('a').attr('href') !== 'http://www.93liberale.de/') {
-								_data.web.push({
-									"service": "blog",
-									"url": $(e).find('a').attr('href')
-								});
-							} else if ($(e).hasClass('flickr') && $(e).find('a').attr('href') !== 'http://www.flickr.com/photos/fdp-bundestagsfraktion/') {
-								_data.web.push({
-									"service": "flickr",
-									"url": $(e).find('a').attr('href')
-								});
-							} else if ($(e).hasClass('twitter') && $(e).find('a').attr('href') !== 'http://twitter.com/fdp_fraktion') {
-								_data.web.push({
-									"service": "twitter",
-									"url": $(e).find('a').attr('href')
-								});
-							} else if ($(e).hasClass('youtube') && $(e).find('a').attr('href') !== 'http://www.youtube.de/fdp') {
-								_data.web.push({
-									"service": "youtube",
-									"url": $(e).find('a').attr('href')
-								});
-							} else if ($(e).hasClass('facebook') && $(e).find('a').attr('href') !== 'http://www.facebook.com/fdpbundestagsfraktion') {
-								_data.web.push({
-									"service": "facebook",
-									"url": $(e).find('a').attr('href')
-								});
-							} else if ($(e).hasClass('xing')) {
-								_data.web.push({
-									"service": "xing",
-									"url": $(e).find('a').attr('href')
-								});
-							} else if ($(e).hasClass('wkw')) {
-								_data.web.push({
-									"service": "wkw",
-									"url": $(e).find('a').attr('href')
-								});
-							} else if ($(e).hasClass('myspace')) {
-								_data.web.push({
-									"service": "myspace",
-									"url": $(e).find('a').attr('href')
 									"url": $(this).find('a.extern').attr('href')
 								});
 							}
@@ -1517,11 +1327,10 @@ var fetch_all = function(_callback) {
 		frak_spd: null,
 		frak_gruene: null,
 		frak_linke: null,
-		frak_fdp: null,
 		frak_cducsu: null
 	};
 	
-	["bt","wp","agw","frak_spd","frak_gruene","frak_linke","frak_fdp","frak_cducsu"].forEach(function(_fetch){
+	["bt","wp","agw","frak_spd","frak_gruene","frak_linke","frak_cducsu"].forEach(function(_fetch){
 		if (argv.v) console.log('[init]'.magenta.inverse.bold, "scraper".cyan, _fetch.white);
 		fetch[_fetch](function(err, data){
 			_passed++;
@@ -1653,24 +1462,6 @@ var data_combine = function(_data, _callback){
 		if (!_found && argv.v) console.log("[warn]".inverse.bold.yellow, "Not found:".yellow, _name.white, '(Fraktion Linke)'.cyan);
 	}
 	
-	/* find fdp */
-	for (var i = 0; i < _data.frak_fdp.length; i++) {
-		var _name = name_simplify(_data.frak_fdp[i].name)
-		var _found = false;
-		var _kontakt = [];
-		_data.frak_fdp[i].kontakt.forEach(function(_k){
-			if (["phone","email"].indexOf(_k.type) >= 0) _kontakt.push(_k.address)
-		});
-		for (var j = 0; j < data.length; j++) {
-			if ((data[j].compare.name.indexOf(_name) >= 0) || (data[j].compare.name.indexOf(name_translations[_name]) >= 0) || (array_intersect(_kontakt, data[j].compare.kontakt))) {
-				var _found = true;
-				data[j].data.frak_fdp = _data.frak_fdp[i];
-				break;
-			}
-		}
-		if (!_found && argv.v) console.log("[warn]".inverse.bold.yellow, "Not found:".yellow, _name.white, '(Fraktion FDP)'.cyan);
-	}
-
 	/* find cdu/csu */
 	for (var i = 0; i < _data.frak_cducsu.length; i++) {
 		var _name = name_simplify(_data.frak_cducsu[i].name)
@@ -1950,50 +1741,6 @@ var data_unify = function(_data, _callback){
 
 		}
 			
-		/* fdp */
-		if ("frak_fdp" in item.data) {
-			
-			/* name */
-			if (_data.aliases.indexOf(item.data.frak_fdp.name) < 0) _data.aliases.push(item.data.frak_fdp.name);
-
-			/* url */
-			_data.web.push({
-				service: "fraktion",
-				url: item.data.frak_fdp.frak_url
-			});
-
-			/* fotos */
-			item.data.frak_fdp.fotos.forEach(function(foto){
-				_data.fotos.push(foto);
-			});
-
-			/* kontakt */
-			item.data.frak_fdp.kontakt.forEach(function(kontakt){
-				_data.kontakt.push(kontakt);
-			});
-
-			/* web */
-			item.data.frak_fdp.web.forEach(function(web){
-				_data.web.push(web);
-			});
-
-			/* beruf */
-			if (_data.meta.beruf === null && item.data.frak_fdp.beruf !== null) {
-				_data.meta.beruf = item.data.frak_fdp.beruf;
-			} 
-
-			/* geburtsdatum */
-			if (_data.meta.geburtsdatum === null && "geburtsdatum" in item.data.frak_fdp && item.data.frak_fdp.geburtsdatum !== null && item.data.frak_fdp.geburtsdatum.match(/^(0[1-9]|[1-2][0-9]|30|31)\.(0[1-9]|10|11|12)\.(19|20)[0-9]{2}$/)) {
-				_data.meta.geburtsdatum = moment(item.data.frak_fdp.geburtsdatum, "DD.MM.YYYY").format("YYYY-MM-DD");
-			}
-
-			/* wahlkreis */
-			if (item.data.frak_fdp.wahlkreis !== null && _data.wahl.wahlkreis_name === null) {
-				_data.wahl.wahlkreis_name = item.data.frak_fdp.wahlkreis;
-			}
-
-		}	
-		
 		/* cducsu */
 		if ("frak_cducsu" in item.data) {
 			
@@ -2037,7 +1784,7 @@ var data_unify = function(_data, _callback){
 			}
 			
 			/* geburtsdatum */
-			if (_data.meta.geburtsdatum === null && "geburtsdatum" in item.data.frak_cducsu && item.data.frak_cducsu.geburtsdatum !== null && item.data.frak_fdp.geburtsdatum.match(/^(0[1-9]|[1-2][0-9]|30|31)\.(0[1-9]|10|11|12)\.(19|20)[0-9]{2}$/)) {
+			if (_data.meta.geburtsdatum === null && "geburtsdatum" in item.data.frak_cducsu && item.data.frak_cducsu.geburtsdatum !== null) {
 				_data.meta.geburtsdatum = moment(item.data.frak_cducsu.geburtsdatum, "DD.MM.YYYY").format("YYYY-MM-DD");
 			}
 			
