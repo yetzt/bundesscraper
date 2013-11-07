@@ -76,9 +76,9 @@ fetch.bt = function(_callback){
 			var _count_fetchable = 0;
 			var _count_fetched = 0;
 			$('.linkIntern a','#inhaltsbereich').each(function(idx, e){
-				var $e = $(e);
+				var $e = $(this);
 				/* check for dead or retired members, marked by "+)" or "*)" and for "Jakob Maria Mierscheid" */
-				if (!($e.text().match(/[\*\+]\)$/)) && !($(e).text().match(/Mierscheid/i))) {
+				if (!($e.text().match(/[\*\+]\)$/)) && !($(this).text().match(/Mierscheid/i))) {
 					_count_fetchable++;
 					var _data = {
 						"name": null,
@@ -115,15 +115,15 @@ fetch.bt = function(_callback){
 							/* fotos */
 							$('.bildDivPortrait', '#inhaltsbereich').each(function(idx,e){
 								_data.fotos.push({
-									"url": url.resolve(_data.url, $(e).find('img').attr('src')),
-									"copyright": $(e).find('.bildUnterschrift p').text()
+									"url": url.resolve(_data.url, $(this).find('img').attr('src')),
+									"copyright": $(this).find('.bildUnterschrift p').text()
 								});
 							});
 
 							/* ausschuesse */
 							$('.mitgliedschaftBox', '#inhaltsbereich').each(function(idx,e){
-								if ($(e).find('h2').eq(0).text().replace(/^\s+|\s+$/,'') === "Mitgliedschaften und Ämter im Bundestag") {
-									$(e).find('.standardBox h3').each(function(idx,f){
+								if ($(this).find('h2').eq(0).text().replace(/^\s+|\s+$/,'') === "Mitgliedschaften und Ämter im Bundestag") {
+									$(this).find('.standardBox h3').each(function(idx,f){
 										$(f).next().find('a').each(function(idx,g){
 											_data.ausschuesse.push({
 												"name": $(g).text(),
@@ -137,11 +137,11 @@ fetch.bt = function(_callback){
 
 							/* website, wahlkreis */
 							$('.contextBox', '#context').each(function(idx,e){
-								var _section = $(e).find('h2').text();
+								var _section = $(this).find('h2').text();
 								switch(_section) {
 									case "Kontakt":
-										if ($(e).find('.standardBox .standardLinkliste .linkExtern a').length > 0) {
-											$(e).find('.standardBox .standardLinkliste .linkExtern a').each(function(idx,f){
+										if ($(this).find('.standardBox .standardLinkliste .linkExtern a').length > 0) {
+											$(this).find('.standardBox .standardLinkliste .linkExtern a').each(function(idx,f){
 												switch($(f).text()) {
 													case "bei Facebook": 
 														_data.web.push({
@@ -198,15 +198,15 @@ fetch.bt = function(_callback){
 									break;
 									case "Gewählt über Landesliste": 
 										_data.mandat = 'liste';
-										if ($(e).find('.standardBox a[title^=Wahlkreis]','#context').length === 1) {
-											_data.wahlkreis = $(e).find('.standardBox a[title^=Wahlkreis]','#context').eq(0).attr('title');
+										if ($(this).find('.standardBox a[title^=Wahlkreis]','#context').length === 1) {
+											_data.wahlkreis = $(this).find('.standardBox a[title^=Wahlkreis]','#context').eq(0).attr('title');
 										} else {
 											_data.wahlkreis = null;
 										}
 									break;
 									case "Direkt gewählt in": 
 										_data.mandat = 'direkt';
-										_data.wahlkreis = $(e).find('.standardBox a[title^=Wahlkreis]','#context').eq(0).attr('title');
+										_data.wahlkreis = $(this).find('.standardBox a[title^=Wahlkreis]','#context').eq(0).attr('title');
 									break;
 									case "Reden des MdB": break;
 									case "Namentliche Abstimmungen": break;
@@ -285,22 +285,22 @@ fetch.bt = function(_callback){
 										
 										$('.infoBox .standardBox table.standard tr','#container').each(function(idx,e){
 											
-											switch ($(e).find('th').text().replace(/^\s+|\s+$/g,'')) {
+											switch ($(this).find('th').text().replace(/^\s+|\s+$/g,'')) {
 												
 												case "Nachname": 
-													_data.nachname = $(e).find('td').text().replace(/^\s+|\s+$/g,'');
+													_data.nachname = $(this).find('td').text().replace(/^\s+|\s+$/g,'');
 												break;
 												case "Vorname": 
-													_data.vorname = $(e).find('td').text().replace(/^\s+|\s+$/g,'');
+													_data.vorname = $(this).find('td').text().replace(/^\s+|\s+$/g,'');
 												break;
 												case "E-Mail Adresse": 
 													_data.kontakt.push({
 														"type": "email",
-														"address": $(e).find('td').text().replace(/^\s+|\s+$/g,'')
+														"address": $(this).find('td').text().replace(/^\s+|\s+$/g,'')
 													});
 												break;
 												case "Zertifikat":
-													_data.btcertuid = $(e).find('td a').eq(0).attr('href').split('uid=').pop();
+													_data.btcertuid = $(this).find('td a').eq(0).attr('href').split('uid=').pop();
 												break;
 												
 											}
@@ -342,9 +342,9 @@ fetch.wp = function(_callback){
 			
 			$('#Abgeordnete').parent().next().next('table.prettytable.sortable').find('tr').each(function(idx,e){
 
-				if ($(e).find('td').length === 0) return;
+				if ($(this).find('td').length === 0) return;
 
-				if (!($(e).find('td').eq(6).text().match(/ausgeschieden|verstorben/))) {
+				if (!($(this).find('td').eq(6).text().match(/ausgeschieden|verstorben/))) {
 					
 					_count_fetchable++;
 					
@@ -357,10 +357,10 @@ fetch.wp = function(_callback){
 						"fotos": [],
 						"fotos_links": []
 					};
-					_data.name = $(e).find('td').eq(0).find('a').text();
-					_data.wp_url = url.resolve(base_url, $(e).find('td').eq(0).find('a').attr('href'));
-					_data.geboren = $(e).find('td').eq(1).text();
-					_data.bundesland = $(e).find('td').eq(3).text();
+					_data.name = $(this).find('td').eq(0).find('a').text();
+					_data.wp_url = url.resolve(base_url, $(this).find('td').eq(0).find('a').attr('href'));
+					_data.geboren = $(this).find('td').eq(1).text();
+					_data.bundesland = $(this).find('td').eq(3).text();
 					scraper.scrape(_data.wp_url, "html", function(err, $){
 
 						_count_fetched++;
@@ -371,7 +371,7 @@ fetch.wp = function(_callback){
 							
 							/* kategorien */
 							$('ul li a','#catlinks').each(function(idx,e){
-								switch ($(e).attr("title")) {
+								switch ($(this).attr("title")) {
 									case "Kategorie:Mann":
 										_data.gender = "m";
 									break;
@@ -387,16 +387,16 @@ fetch.wp = function(_callback){
 							/* weblinks */
 							$('#Weblinks').parent().next('ul').find('a').each(function(idx,e){
 								_data.links.push({
-									"text": $(e).text(),
-									"url": $(e).attr("href")
+									"text": $(this).text(),
+									"url": $(this).attr("href")
 								});
 							});
 							
 							/* personendaten meta */
 							$('#Vorlage_Personendaten tr').each(function(idx,e){
-								if ($(e).find('.metadata-label').length === 1) {
-									var _val = ($(e).find('.metadata-label').next().text());
-									switch($(e).find('.metadata-label').text()) {
+								if ($(this).find('.metadata-label').length === 1) {
+									var _val = ($(this).find('.metadata-label').next().text());
+									switch($(this).find('.metadata-label').text()) {
 										case "NAME":
 											_data.aliases.push(_val);
 										break;
@@ -412,8 +412,8 @@ fetch.wp = function(_callback){
 							
 							/* bilder? */
 							$('a.image', '#mw-content-text').eq(0).each(function(idx,e){
-								if ($(e).attr('href').match(/\.jp(e)?g$/)) {
-									_data.fotos_links.push(url.resolve(_data.wp_url, $(e).attr('href')));
+								if ($(this).attr('href').match(/\.jp(e)?g$/)) {
+									_data.fotos_links.push(url.resolve(_data.wp_url, $(this).attr('href')));
 								}
 							});
 							
@@ -472,7 +472,7 @@ fetch.agw = function(_callback){
 			_pages.push(base_url);
 			
 			$('.browse_pages .pages', '#content').eq(0).find('a.ReloadByPageProfiles').each(function(idx,e){
-				_pages.push(url.resolve(base_url, $(e).attr('href').replace(/#.*$/,'')));
+				_pages.push(url.resolve(base_url, $(this).attr('href').replace(/#.*$/,'')));
 			});
 			
 			_pages.forEach(function(page_url){
@@ -491,8 +491,8 @@ fetch.agw = function(_callback){
 							_count_fetchable++;
 							
 							var _data = {
-								agw_url: url.resolve(page_url, $(e).find('a').eq(0).attr("href")),
-								name: $(e).find(".title").text(),
+								agw_url: url.resolve(page_url, $(this).find('a').eq(0).attr("href")),
+								name: $(this).find(".title").text(),
 								fotos: [],
 								ausschuesse: []
 							};
@@ -508,8 +508,8 @@ fetch.agw = function(_callback){
 									// picture
 									$('.portrait .portrait.bordered_left','#content').each(function(idx,e){
 										_data.fotos.push({
-											"url": url.resolve(_data.agw_url, $(e).find('img').eq(0).attr('src')),
-											"copyright": $(e).find('.copyright').text()
+											"url": url.resolve(_data.agw_url, $(this).find('img').eq(0).attr('src')),
+											"copyright": $(this).find('.copyright').text()
 										});
 									});
 									
@@ -552,9 +552,9 @@ fetch.agw = function(_callback){
 									/*
 									$(".ausschussmitgliedschaften .entry", "#content").each(function(idx,e){
 										_data.ausschuesse.push({
-											"name": $(e).find('.entry_title a').text(),
-											"funktion": $(e).find('title_data').text(),
-											"url": url.resolve(_data.agw_url, $(e).find('.entry_title a').attr('href'))
+											"name": $(this).find('.entry_title a').text(),
+											"funktion": $(this).find('title_data').text(),
+											"url": url.resolve(_data.agw_url, $(this).find('.entry_title a').attr('href'))
 										});
 									});
 									*/
@@ -603,8 +603,8 @@ fetch.frak_spd = function(_callback){
 				_count_fetchable++;
 
 				var _data = {
-					name: $(e).find('h3 a').text(),
-					frak_url: url.resolve(base_url, $(e).find('h3 a').attr('href')),
+					name: $(this).find('h3 a').text(),
+					frak_url: url.resolve(base_url, $(this).find('h3 a').attr('href')),
 					fotos: [],
 					kontakt: [{
 						"type": "email",
@@ -632,8 +632,8 @@ fetch.frak_spd = function(_callback){
 					} else {
 						
 						$('.subcr dl dt','#article_detail_header').each(function(idx,e){
-							var _val = $(e).next('dd').text();
-							switch ($(e).text()) {
+							var _val = $(this).next('dd').text();
+							switch ($(this).text()) {
 								case "Geburtsdatum": 
 									_data.geburtsdatum = _val.split(' in ').unshift(); 
 									_data.geburtsort = _val.split(' in ').pop(); 
@@ -647,24 +647,24 @@ fetch.frak_spd = function(_callback){
 						// links
 						
 						$('.linklist li a','#article_detail_header').each(function(idx,e){
-							switch($(e).text()) {
+							switch($(this).text()) {
 								case "Porträt auf bundestag.de": var _type = "bundestag"; break;
 								case "YouTube": var _type = "youtube"; break;
 								case "Reden im Videoarchiv des Bundestags": var _type = "bundestag_reden"; break;
 								case "Auf twitter": var _type = "twitter"; break;
 								case "Auf facebook": var _type = "facebook"; break;
 								default:
-									if ($(e).text().match(/^Homepage/i)) {
+									if ($(this).text().match(/^Homepage/i)) {
 										var _type = "website";
 									} else {
 										var _type = "unknown";
 									}
 								break;
 							}
-							if ($(e).attr('href') !== '') {
+							if ($(this).attr('href') !== '') {
 								_data.web.push({
 									"service": _type,
-									"url": $(e).attr('href')
+									"url": $(this).attr('href')
 								});
 							}
 						});
@@ -672,7 +672,7 @@ fetch.frak_spd = function(_callback){
 						// foto
 						$('.img_wrapper','#article_detail_header').each(function(idx,e){
 							_data.fotos.push({
-								"url": url.resolve(_data.frak_url, $(e).attr("href")),
+								"url": url.resolve(_data.frak_url, $(this).attr("href")),
 								"copyright": ""
 							});
 						});
@@ -680,9 +680,9 @@ fetch.frak_spd = function(_callback){
 						// kontakt
 						$('.map_box_content li', '#main').each(function(idx,e){
 							
-							var _name = $(e).find('h3').text();
+							var _name = $(this).find('h3').text();
 							
-							$(e).find('div span').each(function(idx,f){
+							$(this).find('div span').each(function(idx,f){
 								if ($(f).text().match(/^(Tel|Fax)/)) {
 									// telefon | fax
 									$(f).text().split(' | ').forEach(function(t){
@@ -709,7 +709,7 @@ fetch.frak_spd = function(_callback){
 									});
 								}
 							});
-							$(e).find('div a').each(function(idx,f){
+							$(this).find('div a').each(function(idx,f){
 								if ($(f).text().match(/E-Mail/)) {
 									_data.kontakt.push({
 										"type": "email",
@@ -759,10 +759,10 @@ fetch.frak_gruene = function(_callback){
 				_count_fetchable++;
 				
 				var _data = {
-					name: $(e).find('.abgeordnete_text p').eq(0).find('a').text(),
-					frak_url: url.resolve(base_url, $(e).find('.abgeordnete_text p').eq(0).find('a').attr("href")),
+					name: $(this).find('.abgeordnete_text p').eq(0).find('a').text(),
+					frak_url: url.resolve(base_url, $(this).find('.abgeordnete_text p').eq(0).find('a').attr("href")),
 					fotos: [{
-						"url": url.resolve(base_url, $(e).find('img').eq(0).attr("src")),
+						"url": url.resolve(base_url, $(this).find('img').eq(0).attr("src")),
 						"copyright": null
 					}],
 					web: [],
@@ -782,18 +782,18 @@ fetch.frak_gruene = function(_callback){
 						
 						// email, telefon & fax
 						$('p.bodytext', '#abgeordnete_links').each(function(idx,e){
-							if ($(e).find('a.mailtolink').length !== 0) {
+							if ($(this).find('a.mailtolink').length !== 0) {
 								/* email */
 								_data.kontakt.push({
 									"type": "email",
 									"name": "Berliner Büro",
-									"address": $(e).find('a.mailtolink').attr("href").replace(/^mailto:/,'')
+									"address": $(this).find('a.mailtolink').attr("href").replace(/^mailto:/,'')
 								});
-							} else if ($(e).find('b').length !== 0) {
+							} else if ($(this).find('b').length !== 0) {
 								// skip
 							} else {
 								/* telefon fax */
-								$(e).html().split('<br>').forEach(function(itm){
+								$(this).html().split('<br>').forEach(function(itm){
 									itm = itm.replace(/^\s+|\s+$/g,'');
 									switch(itm.substr(0,1)) {
 										case "T":
@@ -817,49 +817,49 @@ fetch.frak_gruene = function(_callback){
 						
 						// links 
 						$('li a','#links').each(function(idx,e){
-							switch($(e).text().toLowerCase().replace(/[^a-z]/g,'')){
+							switch($(this).text().toLowerCase().replace(/[^a-z]/g,'')){
 								case "twitter":
 									_data.web.push({
 										"service": "twitter",
-										"url": $(e).attr('href')
+										"url": $(this).attr('href')
 									});
 								break;
 								case "facebook":
 									_data.web.push({
 										"service": "facebook",
-										"url": $(e).attr('href')
+										"url": $(this).attr('href')
 									});
 								break;
 								case "blog":
 									_data.web.push({
 										"service": "blog",
-										"url": $(e).attr('href')
+										"url": $(this).attr('href')
 									});
 								break;
 								case "youtube":
 									_data.web.push({
 										"service": "youtube",
-										"url": $(e).attr('href')
+										"url": $(this).attr('href')
 									});
 								break;
 								case "portrtbeibundestagde":
 									_data.web.push({
 										"service": "bundestag",
-										"url": $(e).attr('href')
+										"url": $(this).attr('href')
 									});
 								break;
 								case "verffentlichungspflichtigeangaben": break;
 								default: 
-									if ($(e).attr('href').toLowerCase().indexOf($(e).text().toLowerCase()) >= 0) {
+									if ($(this).attr('href').toLowerCase().indexOf($(this).text().toLowerCase()) >= 0) {
 										// personal website
 										_data.web.push({
 											"service": "website",
-											"url": $(e).attr('href')
+											"url": $(this).attr('href')
 										});
 									} else {
 										_data.web.push({
 											"service": "unknown",
-											"url": $(e).attr('href')
+											"url": $(this).attr('href')
 										});
 									}
 								break;
@@ -868,14 +868,14 @@ fetch.frak_gruene = function(_callback){
 						
 						/* wahlkreis */
 						$('.wk-info h4 a','#parlament').each(function(idx,e){
-							_data.wahlkreis = $(e).text();
+							_data.wahlkreis = $(this).text();
 						});
 						
 						/* guessing arbritrary address formats */
 						$('.wk-kontakt .bodytext','#parlament').each(function(idx,e){
 
 							var _lines = [];
-							$(e).html().split('<br>').forEach(function(_line){
+							$(this).html().split('<br>').forEach(function(_line){
 								_lines.push(_line.replace(/<[^>]+>/g,'').replace(/\s+/g,' ').replace(/^\s+|\s+$/g,''));
 							});
 														
@@ -961,10 +961,10 @@ fetch.frak_linke = function(_callback){
 				_count_fetchable++;
 				
 				var _data = {
-					name: $(e).find('a').eq(0).attr('title'),
-					frak_url: url.resolve(base_url, $(e).find('a').eq(0).attr('href')),
+					name: $(this).find('a').eq(0).attr('title'),
+					frak_url: url.resolve(base_url, $(this).find('a').eq(0).attr('href')),
 					fotos: [{
-						"url": $(e).find('img').attr('src'),
+						"url": $(this).find('img').attr('src'),
 						"copyright": null
 					}],
 					web: [],
@@ -983,9 +983,9 @@ fetch.frak_linke = function(_callback){
 						
 						$('.kontakt', '#spalte1').each(function(idx,e){
 						
-							var _name = $(e).find("[itemprop=name]").text();
+							var _name = $(this).find("[itemprop=name]").text();
 						
-							$(e).find("[itemprop=address]").each(function(idx,f){
+							$(this).find("[itemprop=address]").each(function(idx,f){
 							
 								_data.kontakt.push({
 									"type": "address",
@@ -995,7 +995,7 @@ fetch.frak_linke = function(_callback){
 							
 							});
 						
-							$(e).find("[itemprop=tel]").each(function(idx,f){
+							$(this).find("[itemprop=tel]").each(function(idx,f){
 								_data.kontakt.push({
 									"type": "phone",
 									"name": _name,
@@ -1003,7 +1003,7 @@ fetch.frak_linke = function(_callback){
 								});
 							});
 						
-							$(e).find("[itemprop=fax]").each(function(idx,f){
+							$(this).find("[itemprop=fax]").each(function(idx,f){
 								_data.kontakt.push({
 									"type": "fax",
 									"name": _name,
@@ -1011,7 +1011,7 @@ fetch.frak_linke = function(_callback){
 								});
 							});
 
-							$(e).find("a.linkEmail").each(function(idx,f){
+							$(this).find("a.linkEmail").each(function(idx,f){
 								_data.kontakt.push({
 									"type": "email",
 									"name": _name,
@@ -1022,10 +1022,9 @@ fetch.frak_linke = function(_callback){
 						});
 					
 						$('.inhaltElement.elemTeaser.extern', '#spalte2').each(function(idx,e){
-							if ($(e).find('h3.kennung').length === 1 && $(e).find('h3.kennung').text() === "Linktipp") {
+							if ($(this).find('h3.kennung').length === 1 && $(this).find('h3.kennung').text() === "Linktipp") {
 								_data.web.push({
 									"service": "website",
-									"url": $(e).find('a.extern').attr('href')
 								});
 							}
 						});
@@ -1216,6 +1215,7 @@ fetch.frak_fdp = function(_callback){
 								_data.web.push({
 									"service": "myspace",
 									"url": $(e).find('a').attr('href')
+									"url": $(this).find('a.extern').attr('href')
 								});
 							}
 						});
@@ -1251,9 +1251,9 @@ fetch.frak_cducsu = function(_callback){
 			
 			$('.ListeAbg ul li .container', '#ctl00_phContentPane').each(function(idx,e){
 				
-				var _url = $(e).find('.abgeordnete h3 a').text();
+				var _url = $(this).find('.abgeordnete h3 a').text();
 				
-				$(e).find('.netzwerke a').each(function(idx,f){
+				$(this).find('.netzwerke a').each(function(idx,f){
 					switch($(f).find('img').attr('src').replace(/^images\/soznetwork\/logo_(.*)\.(png|gif)$/i,'$1')) {
 						case "twitter":
 							if (!(_url in sm_data)) sm_data[_url] = [];
@@ -1317,7 +1317,7 @@ fetch.frak_cducsu = function(_callback){
 				
 					_count_fetchable_sites++;
 				
-					var base_url_letter = url.resolve(base_url, $(e).attr('href'));
+					var base_url_letter = url.resolve(base_url, $(this).attr('href'));
 					
 					scraper.scrape(base_url_letter, "html", function(err, $){
 
@@ -1328,8 +1328,8 @@ fetch.frak_cducsu = function(_callback){
 							_count_fetchable++;
 
 							var _data = {
-								name: $(e).text().replace(/^\s+|\s+$/g,''),
-								frak_url: url.resolve(base_url_letter, $(e).attr('href')),
+								name: $(this).text().replace(/^\s+|\s+$/g,''),
+								frak_url: url.resolve(base_url_letter, $(this).attr('href')),
 								fotos: [],
 								web: [],
 								kontakt: []
@@ -1344,7 +1344,7 @@ fetch.frak_cducsu = function(_callback){
 									/* geburtsdatum, geburtsort, beruf */
 									$('#ctl00_ContentPlaceHolder1_Wuc_AbgeordneteDetail1_lblAllgemein').each(function(idx,e){
 										var _lines = [];
-										$(e).html().split('<br>').forEach(function(_line, idx){
+										$(this).html().split('<br>').forEach(function(_line, idx){
 											_line = _line.replace(/^\s+|\s+$/g,'');
 											if (_line === "") return;
 											_lines.push(_line);
@@ -1370,7 +1370,7 @@ fetch.frak_cducsu = function(_callback){
 									/* adressen */
 									$('#ctl00_ContentPlaceHolder1_Wuc_AbgeordneteDetail1_lblBerlin_Kontakt').each(function(idx,e){
 										var _addr = [];
-										$(e).html().split('<br>').forEach(function(_line){
+										$(this).html().split('<br>').forEach(function(_line){
 											_line = _line.replace(/^\s+|\s+$/g,'');
 											if (_line === "") return;
 											if (_line.match(/:/)) {
@@ -1410,7 +1410,7 @@ fetch.frak_cducsu = function(_callback){
 									
 									$('#ctl00_ContentPlaceHolder1_Wuc_AbgeordneteDetail1_lblWahlkreis_Kontakt').each(function(idx,e){
 										var _addr = [];
-										$(e).html().split('<br>').forEach(function(_line){
+										$(this).html().split('<br>').forEach(function(_line){
 											_line = _line.replace(/^\s+|\s+$/g,'');
 											if (_line === "") return;
 											if (_line.match(/:/)) {
@@ -1457,10 +1457,10 @@ fetch.frak_cducsu = function(_callback){
 									
 									/* website */
 									$('.RightPane_LinkListe_Items .small a', '#ctl00_RightPane_Holder').each(function(idx,e){
-										if ($(e).text() === "Persönliche Homepage") {
+										if ($(this).text() === "Persönliche Homepage") {
 											_data.web.push({
 												"service": "website",
-												"url": $(e).attr('href')
+												"url": $(this).attr('href')
 											});
 										}
 									});
@@ -1470,8 +1470,8 @@ fetch.frak_cducsu = function(_callback){
 										if ($('#ctl00_ContentPlaceHolder1_Wuc_AbgeordneteDetail1_hyp300dpi').length === 1) {
 											_data.fotos.push({
 												"url": url.resolve(_data.frak_url, $('#ctl00_ContentPlaceHolder1_Wuc_AbgeordneteDetail1_hyp300dpi').attr('href')),
-												"copyright": $(e).find(".LicenseText").html().split('<br>').unshift(),
-												"license": $(e).find(".LicenseText a").eq(0).attr('href')
+												"copyright": $(this).find(".LicenseText").html().split('<br>').unshift(),
+												"license": $(this).find(".LicenseText a").eq(0).attr('href')
 											});
 										}
 									});
