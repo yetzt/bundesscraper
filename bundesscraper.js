@@ -606,14 +606,20 @@ fetch.frak_spd = function(_callback){
 					name: $(this).find('h3 a').text(),
 					frak_url: url.resolve(base_url, $(this).find('h3 a').attr('href')),
 					fotos: [],
-					kontakt: [{
-						"type": "email",
-						"address": $(e).find('a.mail').attr('href').replace(/^mailto:/,'')
-					}],
+					kontakt: [],
 					web: []
 				};
 				
-				$(e).find('.share li a').each(function(idx,f){
+				if ($(this).find('a.mail').length > 0) {
+					$(this).find('a.mail').each(function(idx,e){
+						_data.kontakt.push({
+							"type": "email",
+							"address": $(this).attr('href').replace(/^mailto:/,'')
+						})
+					});
+				}
+				
+				$(this).find('.share li a').each(function(idx,f){
 					_data.web.push({
 						service: $(f).text(),
 						url: $(f).attr("href")
@@ -766,11 +772,15 @@ fetch.frak_gruene = function(_callback){
 						"copyright": null
 					}],
 					web: [],
-					kontakt: [{
-						"type": "email",
-						"address": $(e).find('.email_link a').attr('href').replace(/^mailto:/,'')
-					}]
+					kontakt: []
 				}
+				
+				$(this).find('.email_link a').each(function(idx,e){
+					_data.kontakt.push({
+						"type": "email",
+						"address": $(this).attr('href').replace(/^mailto:/,'')
+					})
+				})
 				
 				scraper.scrape(_data.frak_url, "html", function(err, $){
 					
