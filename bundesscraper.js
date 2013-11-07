@@ -68,7 +68,7 @@ var fetch = {};
 
 fetch.bt = function(_callback){
 	var data = [];
-	var base_url = "http://www.bundestag.de/bundestag/abgeordnete17/alphabet/index.html";
+	var base_url = "http://www.bundestag.de/bundestag/abgeordnete18/alphabet/index.html";
 	scraper.scrape(base_url, "html", function(err, $){
 		if (err) {
 			_callback(err);
@@ -1039,7 +1039,7 @@ fetch.frak_linke = function(_callback){
 								});
 							}
 						});
-						
+					
 					}
 					
 					data.push(_data);
@@ -1049,7 +1049,7 @@ fetch.frak_linke = function(_callback){
 						_callback(null, data);
 						
 					}
-					
+		
 				});
 				
 			});
@@ -1461,7 +1461,7 @@ var data_combine = function(_data, _callback){
 		}
 		if (!_found && argv.v) console.log("[warn]".inverse.bold.yellow, "Not found:".yellow, _name.white, '(Fraktion Linke)'.cyan);
 	}
-	
+
 	/* find cdu/csu */
 	for (var i = 0; i < _data.frak_cducsu.length; i++) {
 		var _name = name_simplify(_data.frak_cducsu[i].name)
@@ -1740,7 +1740,7 @@ var data_unify = function(_data, _callback){
 			});
 
 		}
-			
+		
 		/* cducsu */
 		if ("frak_cducsu" in item.data) {
 			
