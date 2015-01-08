@@ -269,7 +269,19 @@ fetch.bt = function(_callback){
 							
 							//hmpf
 
-							scraper.scrape("http://www.bundestag.de/adressbuch/search.do?surname=%2A"+adr_search_surname+"&firstname="+adr_search_firstname+"%2A&fraction=&email=&associatedTo=MdB&doSearch=Suchen", "html", function(err, $){
+							scraper.scrape({
+								url: "http://www.bundestag.de/dokumente/adressbuch/?",
+								type: "html",
+								method: "POST",
+								form: {
+									surname: adr_search_surname,
+									firstname: adr_search_firstname,
+									fraction: "",
+									email: "",
+									associatedTo: "MdB", 
+									doSearch: "Suchen"
+								}
+							}, function(err, $){
 
 								_count_fetched++;
 
@@ -749,7 +761,7 @@ fetch.frak_gruene = function(_callback){
 
 	var data = [];
 	var base_url = "http://www.gruene-bundestag.de/";
-	var fetch_url = "http://www.gruene-bundestag.de/fraktion/abgeordnete_ID_2000011.html";
+	var fetch_url = "http://www.gruene-bundestag.de/fraktion/abgeordnete_ID_4389869.html";
 
 	scraper.scrape(fetch_url, "html", function(err, $){
 
