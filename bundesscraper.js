@@ -1700,9 +1700,7 @@ var data_unify = function(_data, _callback){
 			}
 			
 			if (item.data.frak_spd.wahlkreis !== ' - ' && _data.wahl.wahlkreis_id === null) {
-				// This does not happen, so if it does, add code here
-				console.log("FIXME: SPD Wahlkreis Code");
-				process.exit();
+				_data.wahl.wahlkreis_id = item.data.frak_spd.wahlkreis.replace(/^.*\[([0-9]+)\]$/,'$1');
 			}
 			
 		}
