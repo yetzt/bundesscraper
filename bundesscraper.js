@@ -60,7 +60,27 @@ var name_translations = {
 	"Sonja Steffen": "Sonja Amalie Steffen",
 	"Ursula Lötzer": "Ulla Lötzer",
 	"Veronika Maria Bellmann": "Veronika Bellmann",
-	"Wolfgang Gehrcke Reymann": "Wolfgang Gehrcke"
+	"Wolfgang Gehrcke Reymann": "Wolfgang Gehrcke",
+	"Sevim Dagdelen": "Sevim Dağdelen",
+	"Ulrich Wolfgang Kelber": "Ulrich Kelber",
+	"Ute Finckh Krämer": "Ute Finckh-Krämer",
+	"Aydan Özoguz": "Aydan Özoğuz",
+	"Michaela Engelmeier-Heite": "Michaela Engelmeier",
+	"Mark André Helfrich": "Mark Helfrich",
+	"Charles M. Huber": "Karl-Heinz (Charles M.) Huber", // FIXME (pretentiousness overflow)
+	"Philipp Graf von und zu Lerchenfeld": "Philipp Graf Lerchenfeld",
+	"Elisabeth Charlotte Motschmann": "Elisabeth Motschmann",
+	"Alois Georg Josef Rainer": "Alois Rainer",
+	"Ursula Schauws": "Ulle Schauws",
+	"Charles Huber": "Karl-Heinz (Charles M.) Huber", // FIXME (pretentiousness overflow)
+	"Pia-Beate Zimmermann": "Pia Zimmermann",
+	"Volker Michael Ullrich": "Volker Ullrich",
+	"Matthias Birkwald": "Matthias W. Birkwald",
+	"Ulrike Nissen": "Ulli Nissen",
+	"Bernd Bernhard Fabritius": "Bernd Fabritius",
+	"Chris Kühn": "Christian Kühn",
+	"Artur Friedrich Auernhammer": "Artur Auernhammer",
+	"Gudrun Anna Therese Zollner": "Gudrun Zollner"
 };
 
 /* global object for scrapers */
