@@ -1875,6 +1875,7 @@ var main = function(){
 					compressor.pipe(fs.createWriteStream(out_file).on("finish", function(){
 						if (argv.v) console.log('[save]'.magenta.inverse.bold, path.basename(out_file).white);
 						if (argv.v) console.log("<3".bold.magenta, 'made with datalove'.magenta);
+						process.exit();
 					}));
 					compressor.write(JSON.stringify(data,null,"\t"));
 					compressor.end();
@@ -1882,8 +1883,8 @@ var main = function(){
 					fs.writeFileSync(out_file, JSON.stringify(data, null, '\t'));
 					if (argv.v) console.log('[save]'.magenta.inverse.bold, path.basename(out_file).white);
 					if (argv.v) console.log("<3".bold.magenta, 'made with datalove'.magenta);
+					process.exit();
 				}
-
 			});
 		});
 	});
