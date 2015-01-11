@@ -89,7 +89,11 @@ var fetch = {};
 fetch.bt = function(_callback){
 	var data = [];
 	var base_url = "http://www.bundestag.de/bundestag/abgeordnete18/alphabet/index.html";
-	scraper.scrape(base_url, "html", function(err, $){
+	scraper.scrape({
+		url: base_url, 
+		type: "html", 
+		encoding: "utf8"
+	}, function(err, $){
 		if (err) {
 			_callback(err);
 		} else {
@@ -112,7 +116,11 @@ fetch.bt = function(_callback){
 						"kontakt": [],
 						"web": []
 					};
-					scraper.scrape(_data.url, "html", function(err, $){
+					scraper.scrape({
+						url: _data.url,
+						type: "html",
+						encoding: "utf8"
+					}, function(err, $){
 						if (err) {
 							if (argv.v) console.log("[fail]".inverse.bold.red, "fetching".white, _data.url.red);
 						} else {
@@ -360,8 +368,12 @@ fetch.bt = function(_callback){
 fetch.wp = function(_callback){
 	
 	var data = [];
-	var base_url = "http://de.wikipedia.org/wiki/Liste_der_Mitglieder_des_Deutschen_Bundestages_%2817._Wahlperiode%29";
-	scraper.scrape(base_url, "html", function(err, $){
+	var base_url = "http://de.wikipedia.org/wiki/Liste_der_Mitglieder_des_Deutschen_Bundestages_%2818._Wahlperiode%29";
+	scraper.scrape({
+		url: base_url, 
+		type: "html",
+		encoding: "utf8"
+	}, function(err, $){
 
 		if (err) {
 			_callback(err);
@@ -393,7 +405,12 @@ fetch.wp = function(_callback){
 					_data.wp_url = url.resolve(base_url, $(this).find('td').eq(0).find('a').attr('href'));
 					_data.geboren = $(this).find('td').eq(1).text();
 					_data.bundesland = $(this).find('td').eq(3).text();
-					scraper.scrape(_data.wp_url, "html", function(err, $){
+
+					scraper.scrape({
+						url: _data.wp_url, 
+						type: "html",
+						encoding: "utf8"
+					}, function(err, $){
 
 						_count_fetched++;
 
@@ -462,7 +479,11 @@ fetch.wp = function(_callback){
 								item.fotos_links.forEach(function(foto_url){
 									var _image = foto_url.split(':').pop();
 									_count_fetchable_fotos++;
-									scraper.scrape("http://toolserver.org/~magnus/commonsapi.php?image="+_image, "xml", function(err, _foto){
+									scraper.scrape({
+										url: "http://tools.wmflabs.org/magnus-toolserver/commonsapi.php?image="+_image, 
+										type: "xml",
+										headers: { 'User-Agent': 'bundesscraper/0.2.1 (https://github.com/yetzt/bundesscraper)' }
+									}, function(err, _foto){
 										if (!err) {
 											item.fotos.push({
 												"url": _foto.response.file[0].urls[0].file[0],
@@ -489,8 +510,12 @@ fetch.wp = function(_callback){
 fetch.agw = function(_callback){
 	
 	var data = [];
-	var base_url = "http://www.abgeordnetenwatch.de/abgeordnete-337-0.html";
-	scraper.scrape(base_url, "html", function(err, $){
+	var base_url = "http://www.abgeordnetenwatch.de/abgeordnete-1128-0.html";
+	scraper.scrape({
+		url: base_url, 
+		type: "html",
+		encoding: "utf8"
+	}, function(err, $){
 
 		if (err) {
 			_callback(err);
@@ -509,7 +534,11 @@ fetch.agw = function(_callback){
 			
 			_pages.forEach(function(page_url){
 
-				scraper.scrape(page_url, "html", function(err, $){
+				scraper.scrape({
+					url: page_url, 
+					type: "html",
+					encoding: "utf8"
+				}, function(err, $){
 
 					_count_fetched_pages++;
 
@@ -519,17 +548,21 @@ fetch.agw = function(_callback){
 					} else {
 						
 						$('.list .card', '#content').each(function(idx,e){
-							
+
 							_count_fetchable++;
-							
+														
 							var _data = {
 								agw_url: url.resolve(page_url, $(this).find('a').eq(0).attr("href")),
 								name: $(this).find(".title").text(),
 								fotos: [],
 								ausschuesse: []
 							};
-							
-							scraper.scrape(_data.agw_url, "html", function(err, $){
+
+							scraper.scrape({
+								url: _data.agw_url, 
+								type: "html", 
+								encoding: "utf8",
+							}, function(err, $){
 
 								_count_fetched++;
 
@@ -579,7 +612,7 @@ fetch.agw = function(_callback){
 									} else {
 										if (argv.v) console.log("[fail]", _data.name, _data.agw_url);
 									}
-									
+
 									/* abgeordnetenwatch.de is a big pile of junk */
 									/*
 									$(".ausschussmitgliedschaften .entry", "#content").each(function(idx,e){
@@ -621,7 +654,11 @@ fetch.frak_spd = function(_callback){
 	var data = [];
 	var base_url = "http://www.spdfraktion.de/abgeordnete/all?view=list";
 
-	scraper.scrape(base_url, "html", function(err, $){
+	scraper.scrape({
+		url: base_url,
+		type: "html",
+		encoding: "utf8"
+	}, function(err, $){
 
 		if (err) {
 			_callback(err);
@@ -660,7 +697,11 @@ fetch.frak_spd = function(_callback){
 				
 				// get details
 				
-				scraper.scrape(_data.frak_url, "html", function(err, $){
+				scraper.scrape({
+					url: _data.frak_url, 
+					type: "html", 
+					encoding: "utf8",
+				}, function(err, $){
 					
 					_count_fetched++;
 					
@@ -783,7 +824,11 @@ fetch.frak_gruene = function(_callback){
 	var base_url = "http://www.gruene-bundestag.de/";
 	var fetch_url = "http://www.gruene-bundestag.de/fraktion/abgeordnete_ID_4389869.html";
 
-	scraper.scrape(fetch_url, "html", function(err, $){
+	scraper.scrape({
+		url: fetch_url, 
+		type: "html",
+		encoding: "utf8"
+	}, function(err, $){
 
 		if (err) {
 			_callback(err);
@@ -814,7 +859,11 @@ fetch.frak_gruene = function(_callback){
 					})
 				})
 				
-				scraper.scrape(_data.frak_url, "html", function(err, $){
+				scraper.scrape({
+					url: _data.frak_url, 
+					type: "html",
+					encoding: "utf8"
+				}, function(err, $){
 					
 					_count_fetched++;
 					
@@ -989,7 +1038,11 @@ fetch.frak_linke = function(_callback){
 	var data = [];
 	var base_url = "http://www.linksfraktion.de/abgeordnete/";
 
-	scraper.scrape(base_url, "html", function(err, $){
+	scraper.scrape({
+		url: base_url, 
+		type: "html", 
+		encoding: "utf8"
+	}, function(err, $){
 
 		if (err) {
 			_callback(err);
@@ -1013,7 +1066,11 @@ fetch.frak_linke = function(_callback){
 					kontakt: []
 				}
 				
-				scraper.scrape(_data.frak_url.replace(/profil\/$/,'kontakt/'), "html", function(err, $){
+				scraper.scrape({
+					url: _data.frak_url.replace(/profil\/$/,'kontakt/'), 
+					type: "html", 
+					encoding: "utf8"
+				}, function(err, $){
 				
 					_count_fetched++;
 				
