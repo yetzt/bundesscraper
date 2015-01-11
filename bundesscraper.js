@@ -487,7 +487,7 @@ fetch.wp = function(_callback){
 									scraper.scrape({
 										url: "http://tools.wmflabs.org/magnus-toolserver/commonsapi.php?image="+_image, 
 										type: "xml",
-										headers: { 'User-Agent': 'bundesscraper/0.2.1 (https://github.com/yetzt/bundesscraper)' }
+										headers: { 'User-Agent': 'bundesscraper/0.2.4 (https://github.com/yetzt/bundesscraper)' }
 									}, function(err, _foto){
 										if (!err) {
 											item.fotos.push({
