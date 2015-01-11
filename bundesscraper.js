@@ -602,9 +602,7 @@ fetch.agw = function(_callback){
 														_data.wahlergebnis = __v;
 													break;
 													case "Landeslistenplatz": 
-														__v = __v.split(/, /);
-														_data.listenplatz = __v[0];
-														_data.liste = __v[1];
+														_data.listenplatz = __v;
 													break;
 												}
 											}
