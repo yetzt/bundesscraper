@@ -1,3 +1,4 @@
 .storage
 node_modules
 cache.json
+data.json

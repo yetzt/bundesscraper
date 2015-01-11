@@ -27,7 +27,7 @@ var scraper = new scrapyard({
 });
 
 /* configue moment */
-moment.lang("de");
+moment.locale("de");
 
 /* manual name translations, because some people can't decide how they want to be called */
 var name_translations = {
