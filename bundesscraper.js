@@ -577,14 +577,15 @@ fetch.agw = function(_callback){
 											"copyright": $(this).find('.copyright').text()
 										});
 									});
-									
+
 									// data
 									if ($('.grunddaten ','#content').find(".title_data").eq(0).parent().length === 1) {
-										var _match = $('.grunddaten ','#content').find(".title_data").eq(0).parent().html().match(/<div class="title_data">([^<]+)<\/div>\n([^\n]+)\n/g);
-										_match.forEach(function(_m){
-											var __m = _m.match(/^<div class="title_data">([^<]+)<\/div>\n(.*)\n/);
+										var _match = $('.grunddaten ','#content').find(".title_data").eq(0).parent().html().match(/<div class="title_data">([^<]+)<\/div>([^<]+)/g);
+										if ((!_match) && argv.v) console.log("[fail]", "data", _data.name, _data.agw_url);
+										if (_match) _match.forEach(function(_m){
+											var __m = _m.match(/^<div class="title_data">([^<]+)<\/div>(.*)/);
 											if (__m) {
-												var __v = __m[2].replace(/^\s+|\s+$/,'').replace(/<[^>]+>/g,'');
+												var __v = __m[2].replace(/^\s+|\s+$/g,'').replace(/<[^>]+>/g,'');
 												switch (__m[1]) {
 													case "Geburtstag": 
 														_data.geburtsdatum = __v;
