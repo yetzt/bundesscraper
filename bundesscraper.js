@@ -1568,28 +1568,34 @@ var data_unify = function(_data, _callback){
 		/* abgeordnetenwatch */
 		
 		/* name */
-		if (_data.aliases.indexOf(item.data.agw.name) < 0) _data.aliases.push(item.data.agw.name);
-		
-		/* url */
-		_data.web.push({
-			service: "agw",
-			url: item.data.agw.agw_url
-		});
-		
-		/* fotos */
-		item.data.agw.fotos.forEach(function(foto){
-			_data.fotos.push(foto);
-		});
-		
-		/* wahl */
-		if ("liste" in item.data.agw && item.data.agw.liste !== null) _data.wahl.liste = item.data.agw.liste;
-		if ("listenplatz" in item.data.agw && item.data.agw.listenplatz !== null) _data.wahl.listenplatz = item.data.agw.listenplatz;
-		if ("wahlergebnis" in item.data.agw && item.data.agw.wahlergebnis !== null) _data.wahl.ergebnis = item.data.agw.wahlergebnis;
+		if (item.data.hasOwnProperty("agw")) {
+			
+			if (_data.aliases.indexOf(item.data.agw.name) < 0) _data.aliases.push(item.data.agw.name);
 
-		/* meta */
-		if ("geburtsdatum" in item.data.agw && item.data.agw.geburtsdatum !== null && item.data.agw.geburtsdatum.match(/^(0[1-9]|[1-2][0-9]|30|31)\.(0[1-9]|10|11|12)\.(19|20)[0-9]{2}$/)) _data.meta.geburtsdatum = moment(item.data.agw.geburtsdatum, "DD.MM.YYYY").format("YYYY-MM-DD");
-		if ("beruf" in item.data.agw && item.data.agw.beruf !== null) _data.meta.beruf = item.data.agw.beruf;
-		if ("wohnort" in item.data.agw && item.data.agw.wohnort !== null) _data.meta.wohnort = item.data.agw.wohnort;
+			/* url */
+			_data.web.push({
+				service: "agw",
+				url: item.data.agw.agw_url
+			});
+		
+			/* fotos */
+			item.data.agw.fotos.forEach(function(foto){
+				_data.fotos.push(foto);
+			});
+		
+			/* wahl */
+			if ("liste" in item.data.agw && item.data.agw.liste !== null) _data.wahl.liste = item.data.agw.liste;
+			if ("listenplatz" in item.data.agw && item.data.agw.listenplatz !== null) _data.wahl.listenplatz = item.data.agw.listenplatz;
+			if ("wahlergebnis" in item.data.agw && item.data.agw.wahlergebnis !== null) _data.wahl.ergebnis = item.data.agw.wahlergebnis;
+
+			/* meta */
+			if ("geburtsdatum" in item.data.agw && item.data.agw.geburtsdatum !== null && item.data.agw.geburtsdatum.match(/^(0[1-9]|[1-2][0-9]|30|31)\.(0[1-9]|10|11|12)\.(19|20)[0-9]{2}$/)) _data.meta.geburtsdatum = moment(item.data.agw.geburtsdatum, "DD.MM.YYYY").format("YYYY-MM-DD");
+			if ("beruf" in item.data.agw && item.data.agw.beruf !== null) _data.meta.beruf = item.data.agw.beruf;
+			if ("wohnort" in item.data.agw && item.data.agw.wohnort !== null) _data.meta.wohnort = item.data.agw.wohnort;
+			
+		} else {
+			if (argv.v) console.log("[warn]".inverse.bold.yellow, "No Data for:".yellow, _data.name.white, '(Abgeordnetenwatch)'.cyan);
+		}
 
 		/* wikipedia */
 		if ("wp" in item.data) {
