@@ -1151,261 +1151,198 @@ fetch.frak_linke = function(_callback){
 
 fetch.frak_cducsu = function(_callback){
 
-	var sm_data = {};
-	var base_url_sm = "http://www.cducsu.de/Titel__soziale_netzwerke/TabID__23/SubTabID__106/Abgeordnete_Netzwerke.aspx";
-	
-	scraper.scrape(base_url_sm, "html", function(err, $){
+	var data = [];
+	var base_url = "https://www.cducsu.de/abgeordnete";
+	var _count_fetchable = 0;
+	var _count_fetched = 0;
+
+	scraper.scrape({
+		url: base_url, 
+		type: "html", 
+		encoding: "utf8"
+	}, function(err, $){
 		
-		if (!err) {
-			
-			$('.ListeAbg ul li .container', '#ctl00_phContentPane').each(function(idx,e){
-				
-				var _url = $(this).find('.abgeordnete h3 a').text();
-				
-				$(this).find('.netzwerke a').each(function(idx,f){
-					switch($(f).find('img').attr('src').replace(/^images\/soznetwork\/logo_(.*)\.(png|gif)$/i,'$1')) {
-						case "twitter":
-							if (!(_url in sm_data)) sm_data[_url] = [];
-							sm_data[_url].push({
-								"service": "twitter",
-								"url": $(f).attr('href')
-							})
-						break;
-						case "facebook":
-							if (!(_url in sm_data)) sm_data[_url] = [];
-							sm_data[_url].push({
-								"service": "facebook",
-								"url": $(f).attr('href')
-							})
-						break;
-						case "xing":
-							if (!(_url in sm_data)) sm_data[_url] = [];
-							sm_data[_url].push({
-								"service": "xing",
-								"url": $(f).attr('href')
-							})
-						break;
-						case "meinvz":
-							if (!(_url in sm_data)) sm_data[_url] = [];
-							sm_data[_url].push({
-								"service": "meinvz",
-								"url": $(f).attr('href')
-							})
-						break;
-						case "wkw":
-							if (!(_url in sm_data)) sm_data[_url] = [];
-							sm_data[_url].push({
-								"service": "wkw",
-								"url": $(f).attr('href')
-							})
-						break;
+		if (err) return _callback(new Error("could not fetch", base_url));
+		
+		$('.abgeordnete_az_content .node-abgeordneter a.abgeordnete_wrapper_link', '#block-system-main').each(function(idx,e){
+
+			_count_fetchable++;
+
+			(function(_url){
+
+				scraper.scrape({
+					"url": _url, 
+					type: "html", 
+					encoding: "utf8"
+				}, function(err, $){
+
+					var _data = {
+						name: $('.group-hauptinfo .group-infobereich h1', '#block-system-main').text().replace(/^\s+|\s+$/g,''),
+						frak_url: _url,
+						fotos: [],
+						web: [],
+						kontakt: []
 					}
-				});
-				
-			});
-
-		}
-		
-		/* we have social networks now */
-		
-		var data = [];
-		var base_url = "http://www.cducsu.de/Titel__a_bis_z/TabID__23/SubTabID__24/Abgeordnete.aspx";
-
-		scraper.scrape(base_url, "html", function(err, $){
-
-			if (err) {
-				_callback(err);
-			} else {
-
-				var _count_fetchable_sites = 0;
-				var _count_fetched_sites = 0;
-				var _count_fetchable = 0;
-				var _count_fetched = 0;
-			
-				$('.Letters li a','#ctl00_phContentPane').each(function(idx,e){
-				
-					_count_fetchable_sites++;
-				
-					var base_url_letter = url.resolve(base_url, $(this).attr('href'));
 					
-					scraper.scrape(base_url_letter, "html", function(err, $){
+					_data.position = $('.group-hauptinfo .group-infobereich h3', '#block-system-main').text().replace(/^\s+|\s+$/g,'');
+					_data.geburtsdatum = $('.group-hauptinfo .group-infobereich .group-birthday time.date-display-single', '#block-system-main').attr("datetype");
+					_data.geburtsort = ent.decode($('.group-hauptinfo .group-infobereich .group-birthday').html().split(/<\/div>/g).pop().replace(/^\s+|\s+$/g,''));
+					_data.beruf = $('.group-hauptinfo .group-infobereich .field.field-name-beruf-gendered', '#block-system-main').text().replace(/^\s+|\s+$/g,'');
+					
+					/* wahlkreis, addressen, social media, */
+					if (/^.*Wahlkreis.*\(([0-9]+)\).*$/.test($('.wahlkreis-name', '#block-system-main').text())) {
+						_data.wahlkreis = $('.wahlkreis-name', '#block-system-main').text().replace(/^.*Wahlkreis.*\(([0-9]+)\).*$/,'$1');
+						_data.mandat = "direkt";
+					} else {
+						_data.mandat = "liste";
+					}
 
-						_count_fetched_sites++;
+					// addresse berlin
+					$('.field-name-field-kontakt-berlin .adr', '#block-system-main').each(function(idx, e){
+						$('.type', $(this)).remove();
 
-						$('.ListeAbg ul li div a','#ctl00_phContentPane').each(function(idx,e){
-
-							_count_fetchable++;
-
-							var _data = {
-								name: $(this).text().replace(/^\s+|\s+$/g,''),
-								frak_url: url.resolve(base_url_letter, $(this).attr('href')),
-								fotos: [],
-								web: [],
-								kontakt: []
-							}
-
-							scraper.scrape(_data.frak_url, "html", function(err, $){
-							
-								if ($('img').eq(0).attr("src") === "http://www.cducsu.de/404/keyvisual.jpg") {
-									console.error("[grr!]".red.inverse.bold, "cducsu.de delivered a fake 404".red, _data.frak_url.white);
-								} else if (!err) {
-									
-									/* geburtsdatum, geburtsort, beruf */
-									$('#ctl00_ContentPlaceHolder1_Wuc_AbgeordneteDetail1_lblAllgemein').each(function(idx,e){
-										var _lines = [];
-										$(this).html().split('<br>').forEach(function(_line, idx){
-											_line = _line.replace(/^\s+|\s+$/g,'');
-											if (_line === "") return;
-											_lines.push(_line);
-										});
-										var _geb = _lines[0].match(/^Geboren am ([0-9\.]{10}) in (.*)$/)
-										if (_geb) {
-											_data.geburtsdatum = _geb[1];
-											_data.geburtsort = _geb[2];
-										}
-										_data.beruf = _lines.pop();
-									});
-									
-									/* wahlkreis */
-									if ($('#ctl00_ContentPlaceHolder1_Wuc_AbgeordneteDetail1_lblWahlkreis').length === 1) {
-										if ($('#ctl00_ContentPlaceHolder1_Wuc_AbgeordneteDetail1_lblWahlkreis').text().match(/Wahlkreis/)) {
-											_data.wahlkreis = $('#ctl00_ContentPlaceHolder1_Wuc_AbgeordneteDetail1_lblWahlkreis').text().replace(/^.*Wahlkreis ([0-9]+)\).*$/,'$1');
-											_data.mandat = "direkt";
-										} else {
-											_data.mandat = "liste";
-										}
-									}
-									
-									/* adressen */
-									$('#ctl00_ContentPlaceHolder1_Wuc_AbgeordneteDetail1_lblBerlin_Kontakt').each(function(idx,e){
-										var _addr = [];
-										$(this).html().split('<br>').forEach(function(_line){
-											_line = _line.replace(/^\s+|\s+$/g,'');
-											if (_line === "") return;
-											if (_line.match(/:/)) {
-												switch (_line.split(':').shift()) {
-													case "Tel.":
-														_data.kontakt.push({
-															"type": "phone",
-															"name": "Berlin",
-															"address": _line.replace(/[^0-9]/g,'').replace(/^0/,'+49')
-														});
-													break;
-													case "Fax":
-														_data.kontakt.push({
-															"type": "fax",
-															"name": "Berlin",
-															"address": _line.replace(/[^0-9]/g,'').replace(/^0/,'+49')
-														});
-													break;
-													case "E-Mail":
-														_data.kontakt.push({
-															"type": "email",
-															"name": "Berlin",
-															"address": $('a', _line).attr('href').replace(/^mailto:/g,'')
-														});
-													break;
-												}
-											} else {
-												_addr.push(_line);
-											}
-										});
-										_data.kontakt.push({
-											"type": "address",
-											"name": "Berlin",
-											"address": _addr.join(', ')
-										});
-									});
-									
-									$('#ctl00_ContentPlaceHolder1_Wuc_AbgeordneteDetail1_lblWahlkreis_Kontakt').each(function(idx,e){
-										var _addr = [];
-										$(this).html().split('<br>').forEach(function(_line){
-											_line = _line.replace(/^\s+|\s+$/g,'');
-											if (_line === "") return;
-											if (_line.match(/:/)) {
-												switch (_line.split(':').shift()) {
-													case "Tel.":
-														_data.kontakt.push({
-															"type": "phone",
-															"name": "Wahlkreis",
-															"address": _line.replace(/[^0-9]/g,'').replace(/^0/,'+49')
-														});
-													break;
-													case "Fax":
-														_data.kontakt.push({
-															"type": "fax",
-															"name": "Wahlkreis",
-															"address": _line.replace(/[^0-9]/g,'').replace(/^0/,'+49')
-														});
-													break;
-													case "E-Mail":
-														_data.kontakt.push({
-															"type": "email",
-															"name": "Wahlkreis",
-															"address": $('a', _line).attr('href').replace(/^mailto:/g,'')
-														});
-													break;
-												}
-											} else {
-												_addr.push(_line);
-											}
-										});
-										_data.kontakt.push({
-											"type": "address",
-											"name": "Wahlkreis",
-											"address": _addr.join(', ')
-										});
-									});
-									
-									/* social media */
-									if (_data.name in sm_data) {
-										sm_data[_data.name].forEach(function(sm){
-											_data.web.push(sm);
-										});
-									}
-									
-									/* website */
-									$('.RightPane_LinkListe_Items .small a', '#ctl00_RightPane_Holder').each(function(idx,e){
-										if ($(this).text() === "Persönliche Homepage") {
-											_data.web.push({
-												"service": "website",
-												"url": $(this).attr('href')
-											});
-										}
-									});
-									
-									/* foto */
-									$('.Abg_RightPane', '#ctl00_ContentPlaceHolder1_Wuc_AbgeordneteDetail1_divDetailHolder').each(function(idx,e){
-										if ($('#ctl00_ContentPlaceHolder1_Wuc_AbgeordneteDetail1_hyp300dpi').length === 1) {
-											_data.fotos.push({
-												"url": url.resolve(_data.frak_url, $('#ctl00_ContentPlaceHolder1_Wuc_AbgeordneteDetail1_hyp300dpi').attr('href')),
-												"copyright": $(this).find(".LicenseText").html().split('<br>').unshift(),
-												"license": $(this).find(".LicenseText a").eq(0).attr('href')
-											});
-										}
-									});
-									
-								}
-								
-								_count_fetched++;
-								data.push(_data);
-								if (_count_fetchable_sites === _count_fetched_sites && _count_fetchable === _count_fetched) _callback(null, data);
-							
+						$('.tel', $(this)).each(function(idx,e){
+							_data.kontakt.push({
+								"type": "phone",
+								"name": "Berlin",
+								"address": $(this).text().replace(/^\s+|\s+$/g,'').replace(/[^0-9]/g,'').replace(/^0/,'+49')
 							});
-							
 						});
-						
+
+						$('.email', $(this)).each(function(idx,e){
+							_data.kontakt.push({
+								"type": "email",
+								"name": "Berlin",
+								"address": $(this).text().replace(/^\s+|\s+$/g,'')
+							});
+						});
+
+						_data.kontakt.push({
+							"type": "address",
+							"name": "Berlin",
+							"address": [
+								$(".street-address", $(this)).text().replace(/^\s+|\s+$/g,''),
+								", ",
+								$(".postal-code", $(this)).text().replace(/^\s+|\s+$/g,''),
+								" ",
+								$(".locality", $(this)).text().replace(/^\s+|\s+$/g,'')
+							].join("")
+						});
+
 					});
-				
+					
+					// addresse wahlkreis
+					$('.group-wahl-wrapper .adr', '#block-system-main').each(function(idx, e){
+						$('.type', $(this)).remove();
+
+						$('.tel', $(this)).each(function(idx,e){
+							_data.kontakt.push({
+								"type": "phone",
+								"name": "Wahlkreis",
+								"address": $(this).text().replace(/^\s+|\s+$/g,'').replace(/[^0-9]/g,'').replace(/^0/,'+49')
+							});
+						});
+
+						$('.email', $(this)).each(function(idx,e){
+							_data.kontakt.push({
+								"type": "email",
+								"name": "Wahlkreis",
+								"address": $(this).text().replace(/^\s+|\s+$/g,'')
+							});
+						});
+
+						_data.kontakt.push({
+							"type": "address",
+							"name": "Wahlkreis",
+							"address": [
+								$(".street-address", $(this)).text().replace(/^\s+|\s+$/g,''),
+								", ",
+								$(".postal-code", $(this)).text().replace(/^\s+|\s+$/g,''),
+								" ",
+								$(".locality", $(this)).text().replace(/^\s+|\s+$/g,'')
+							].join("")
+						});
+
+					});
+					
+					// social media
+					
+					$('.view.view-abgeordneter-sozialnetzwerke li', '#block-system-main').each(function(idx, e){
+						switch ($(this).attr("class")) {
+							case "twitter":
+								_data.web.push({
+									"service": "twitter",
+									"url": $('a', $(this)).attr('href')
+								});
+							break;
+							case "facebook":
+								_data.web.push({
+									"service": "facebook",
+									"url": $('a', $(this)).attr('href')
+								});
+							break;
+							case "xing":
+								_data.web.push({
+									"service": "xing",
+									"url": $('a', $(this)).attr('href')
+								});
+							break;
+							case "youtube":
+								_data.web.push({
+									"service": "youtube",
+									"url": $('a', $(this)).attr('href')
+								});
+							break;
+							case "vz":
+								_data.web.push({
+									"service": "meinvz",
+									"url": $('a', $(this)).attr('href')
+								});
+							break;
+							default:
+								console.log($(this).attr("class"), $(this).html());
+								process.exit();
+							break;
+						}
+					});
+					
+					// links
+					$('.view-externe-links li', '#block-system-main').remove(".mobile_visible");
+					$('.view-externe-links li a', '#block-system-main').each(function(idx, e){
+
+						switch ($(this).text().replace(/^\s+|\s+$/g,'')) {
+							case "Persönliche Homepage":
+								_data.web.push({
+									"service": "website",
+									"url": $(this).attr('href')
+								});
+							break;
+						}
+					});
+										
+					// foto
+					$('.abgeordnete_content_box .file-image', '#block-system-main').each(function(idx,e){
+						$('.group-bildquelle', $(this)).remove('.label-inline')
+						_data.fotos.push({
+							"url": url.resolve(_url, $('a.colorbox', $(this)).attr('href')),
+							"copyright": $('.group-bildquelle', $(this)).text().replace(/^\s+|\s+$/g,''),
+							"license": $('a[rel=license]', $(this)).attr("href") || null
+						});
+					});
+
+					data.push(_data);
+					if (++_count_fetched === _count_fetchable) _callback(null, data);
+					
+					
 				});
-		
-			}
-	
+
+			})(url.resolve(base_url, $(this).attr("href")))
+			
 		});
-	
+
 	});
-	
-};
+
+}
 
 var fetch_all = function(_callback) {
 	var _passed = 0;
