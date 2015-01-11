@@ -1,38 +1,43 @@
 {
-	"name": "bundesscraper",
-	"version": "0.2.0",
-	"description": "Scraping Data of Members of the German Federal Parliament.",
-	"licenses": [{
-		"type": "Public Domain",
-		"url": "http://unlicense.org/UNLICENSE"
-	}],
-	"author": "Sebastian Vollnhals <sv@datenfreunde.com>",
-	"maintainers": [{
-		"name": "Sebastian Vollnhals",
-		"email": "sv@datenfreunde.com",
-		"web": "http://datenfreunde.com/"
-	}],
-	"main": "./bundesscraper.js",
-	"bin": {
-		"bundesscraper": "./bundesscraper.js"
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/yetzt/bundesscraper.git"
-	},
-	"keywords": [
-		"opendata",
-		"scraper",
-		"bundestag",
-		"open government"
-	],
-	"dependencies": {
-		"colors": ">= 0.6.2",
-		"scrapyard": ">= 0.0.2",
-		"moment": ">= 2.2.1",
-		"optimist": ">= 0.6.0"
-	},
-	"engines": {
-		"node": ">= 0.10.21"
-	}
+  "name": "bundesscraper",
+  "version": "0.2.1",
+  "description": "Scraping Data of Members of the German Federal Parliament.",
+  "licenses": [
+    {
+      "type": "Public Domain",
+      "url": "http://unlicense.org/UNLICENSE"
+    }
+  ],
+  "author": "Sebastian Vollnhals <sv@datenfreunde.com>",
+  "maintainers": [
+    {
+      "name": "Sebastian Vollnhals",
+      "email": "sv@datenfreunde.com",
+      "web": "http://datenfreunde.com/"
+    }
+  ],
+  "main": "./bundesscraper.js",
+  "bin": {
+    "bundesscraper": "./bundesscraper.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yetzt/bundesscraper.git"
+  },
+  "keywords": [
+    "opendata",
+    "scraper",
+    "bundestag",
+    "open government"
+  ],
+  "dependencies": {
+    "colors": ">= 0.6.2",
+    "ent": "^2.0.0",
+    "moment": ">= 2.2.1",
+    "optimist": ">= 0.6.0",
+    "scrapyard": ">= 0.0.2"
+  },
+  "engines": {
+    "node": ">= 0.10.21"
+  }
 }
