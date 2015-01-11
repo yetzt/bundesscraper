@@ -532,6 +532,12 @@ fetch.agw = function(_callback){
 				_pages.push(url.resolve(base_url, $(this).attr('href').replace(/#.*$/,'')));
 			});
 			
+			var _lastp = parseInt(_pages.pop().replace(/^.*\-0-([0-9]+)\.html$/,"$1"),10);
+			var _pages = [];
+			for (var i = 0; i <= _lastp; i++) {
+				_pages.push(base_url.replace(/0\.html$/, '0-'+i+'.html'))
+			}
+			
 			_pages.forEach(function(page_url){
 
 				scraper.scrape({
