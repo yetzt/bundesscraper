@@ -1598,7 +1598,7 @@ var data_unify = function(_data, _callback){
 		}
 
 		/* wikipedia */
-		if ("wp" in item.data) {
+		if (item.data.hasOwnProperty("wp")) {
 
 			/* name */
 			if (_data.aliases.indexOf(item.data.wp.name) < 0) _data.aliases.push(item.data.wp.name);
