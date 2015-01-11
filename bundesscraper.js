@@ -1369,13 +1369,16 @@ var fetch_all = function(_callback) {
 
 var name_simplify = function(_name) {
 	return _name
-		.replace(/(Prof\. |Dr\. |h\.\s?c\. |med\. |vet\. )/g,'')
+		.replace(/(Prof\.|Dr\.|h\.\s?c\.|med\.|vet\.|rer\.|nat\.|pol\.|iur\.)\s?/g,'')
 		.replace(/\s+[A-Za-z]\.\s+/,' ')
 		.replace(/\s+/g,' ')
 		.replace(/ [a-z]+ /g,' ')
 		.replace(/ [a-z]+ /g,' ')
 		.replace(/ Freiherr /g,' ')
 		.replace(/-/g,' ')
+		.replace(/Dipl\. Soz\.Wiss\. /, '')
+		.replace(/\([^\)]+\) /,'')
+		.replace(/\s+/g,' ')
 		.replace(/^\s+|\s+$/g,'');
 }
 
