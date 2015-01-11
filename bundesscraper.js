@@ -1362,7 +1362,7 @@ var fetch_all = function(_callback) {
 			_passed++;
 			if (argv.v) console.log(((err)?'[fail]'.red:'[ ok ]'.green).inverse.bold, "scraper".cyan, _fetch.white);
 			if (!err) _data[_fetch] = data;
-			if (_passed === 8) _callback(null, _data);
+			if (_passed === 7) _callback(null, _data);
 		});
 	});
 };
