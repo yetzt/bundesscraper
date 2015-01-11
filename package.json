@@ -35,7 +35,7 @@
     "ent": "^2.0.0",
     "moment": ">= 2.2.1",
     "optimist": ">= 0.6.0",
-    "scrapyard": ">= 0.0.2"
+    "scrapyard": ">= 0.0.8"
   },
   "engines": {
     "node": ">= 0.10.21"
