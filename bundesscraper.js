@@ -145,7 +145,7 @@ fetch.bt = function(_callback){
 							$('.bildDivPortrait', '#inhaltsbereich').each(function(idx,e){
 								_data.fotos.push({
 									"url": url.resolve(_data.url, $(this).find('img').attr('src')),
-									"copyright": $(this).find('.bildUnterschrift p').text()
+									"copyright": $(this).find('.bildUnterschrift p').text().replace(/^\s+|\s+$/,'')
 								});
 							});
 
@@ -155,7 +155,7 @@ fetch.bt = function(_callback){
 									$(this).find('.standardBox h3').each(function(idx,f){
 										$(f).next().find('a').each(function(idx,g){
 											_data.ausschuesse.push({
-												"name": $(g).text(),
+												"name": $(g).text().replace(/^\s+|\s+$/,''),
 												"funktion": $(f).text().replace(/^\s+|\s+$/,""),
 												"url": url.resolve(_data.url, $(g).attr('href'))
 											});
