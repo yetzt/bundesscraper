@@ -9,12 +9,16 @@ var colors = require("colors");
 var scrapyard = require("scrapyard");
 var moment = require("moment");
 var ent = require("ent");
+var xz = require("lzma-native");
 
 var argv = require("optimist")
-	.boolean(["c","d"])
+	.boolean(["c","d","z","t"])
 	.alias("c","cache")
 	.alias("d","debug")
 	.alias("v","verbose")
+	.alias("z","compress")
+	.alias("t","timestamp")
+	.alias("o","outdir")
 	.argv;
 
 /* initialize scrapyard */
@@ -1855,14 +1859,31 @@ var load_data = function(_callback) {
 }
 
 var main = function(){
-	var out_file = (argv._.length > 0) ?  path.resolve(argv._[0]) : path.resolve(__dirname, 'data.json');
 	load_data(function(err, data){
 		if (argv.v) console.log('[stat]'.magenta.inverse.bold, "all data loaded".white);
 		data_combine(data, function(err, data){
 			data_unify(data, function(err, data){
 				if (argv.v) console.log('[stat]'.magenta.inverse.bold, "all data combined".white);
-				fs.writeFileSync(out_file, JSON.stringify(data, null, '\t'));
-				console.log("<3".bold.magenta, 'made with datalove'.magenta);
+
+				var out_file = (argv._.length > 0) ? argv._[0] : 'data.json';
+				if (argv.t) out_file = "bundesscraper."+moment().format("YYYYMMDD")+".json";
+				if (argv.z) out_file += ".xz";
+				out_file = path.resolve((argv.o || __dirname), out_file);
+
+				if (argv.z) {
+					var compressor = new xz.Compressor(9);
+					compressor.pipe(fs.createWriteStream(out_file).on("finish", function(){
+						if (argv.v) console.log('[save]'.magenta.inverse.bold, path.basename(out_file).white);
+						if (argv.v) console.log("<3".bold.magenta, 'made with datalove'.magenta);
+					}));
+					compressor.write(JSON.stringify(data,null,"\t"));
+					compressor.end();
+				} else {
+					fs.writeFileSync(out_file, JSON.stringify(data, null, '\t'));
+					if (argv.v) console.log('[save]'.magenta.inverse.bold, path.basename(out_file).white);
+					if (argv.v) console.log("<3".bold.magenta, 'made with datalove'.magenta);
+				}
+
 			});
 		});
 	});
