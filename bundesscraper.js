@@ -131,8 +131,8 @@ fetch.bt = function(_callback){
 							
 							/* build aliases */
 							_data.aliases.push(_data.name);
-							if (_data.name.match(/^(Prof\. |Dr\. |h\.\s?c\. )/)) {
-								_data.aliases.push(_data.name.replace(/(Prof\. |Dr\. |h\.\s?c\. )/g,''));
+							if (_data.name.match(/^(Prof\. |Dr\. |h\.\s?c\. |rer\. |nat\. |jur\. |iur\. |pol\. )/)) {
+								_data.aliases.push(_data.name.replace(/(Prof\. |Dr\. |h\.\s?c\. |rer\. |nat\. |jur\. |iur\. |pol\. )/g,''));
 							}
 							_data.aliases.forEach(function(name){
 								if (name.match(/\s+[A-Z]\.\s+/)) {
