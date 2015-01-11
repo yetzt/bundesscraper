@@ -8,6 +8,7 @@ var url = require("url");
 var colors = require("colors");
 var scrapyard = require("scrapyard");
 var moment = require("moment");
+var ent = require("ent");
 
 var argv = require("optimist")
 	.boolean(["c","d"])
