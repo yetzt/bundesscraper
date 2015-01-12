@@ -1,5 +1,8 @@
 #!/usr/bin/env node
 
+/* all the listeners! (trust me, it's gonna be ok) */
+process.setMaxListeners(0);
+
 /* require modules */
 var fs = require("fs");
 var path = require("path");
@@ -487,7 +490,7 @@ fetch.wp = function(_callback){
 									scraper.scrape({
 										url: "http://tools.wmflabs.org/magnus-toolserver/commonsapi.php?image="+_image, 
 										type: "xml",
-										headers: { 'User-Agent': 'bundesscraper/0.2.4 (https://github.com/yetzt/bundesscraper)' }
+										headers: { 'User-Agent': 'bundesscraper/0.2.5 (https://github.com/yetzt/bundesscraper)' }
 									}, function(err, _foto){
 										if (!err) {
 											item.fotos.push({
